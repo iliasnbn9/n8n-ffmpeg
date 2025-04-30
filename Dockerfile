@@ -1,28 +1,27 @@
 FROM n8nio/n8n:latest
 
-# Install ffmpeg (déjà prévu dans ton repo)
 USER root
 
-RUN apt-get update && \
-    apt-get install -y ffmpeg \
-                       python3 \
-                       python3-pip \
-                       git \
-                       curl \
-                       ca-certificates \
-                       gcc \
-                       libpq-dev \
-                       libffi-dev \
-                       libssl-dev \
-                       build-essential && \
+# Installer Python + pip + snscrape avec apk (Alpine)
+RUN apk update && \
+    apk add --no-cache \
+        python3 \
+        py3-pip \
+        py3-setuptools \
+        gcc \
+        g++ \
+        libffi-dev \
+        openssl-dev \
+        musl-dev \
+        git && \
     pip3 install --upgrade pip && \
     pip3 install snscrape && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/cache/apk/*
 
-# Crée un dossier pour tes scripts python
+# Créer dossier (optionnel)
 RUN mkdir -p /data/scripts
-COPY ./scripts /data/scripts
 
-# Redonne l'utilisateur n8n pour la suite
+# (Décommente si tu ajoutes un dossier ./scripts localement)
+# COPY ./scripts /data/scripts
+
 USER node
