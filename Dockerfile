@@ -2,26 +2,27 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Installer Python + pip + snscrape avec apk (Alpine)
+# Installer Python + venv + dépendances de build
 RUN apk update && \
     apk add --no-cache \
         python3 \
         py3-pip \
         py3-setuptools \
+        py3-virtualenv \
         gcc \
         g++ \
         libffi-dev \
         openssl-dev \
         musl-dev \
         git && \
-    pip3 install --upgrade pip && \
-    pip3 install snscrape && \
+    python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install snscrape && \
     rm -rf /var/cache/apk/*
 
-# Créer dossier (optionnel)
+# Créer un dossier pour scripts (optionnel)
 RUN mkdir -p /data/scripts
 
-# (Décommente si tu ajoutes un dossier ./scripts localement)
-# COPY ./scripts /data/scripts
+ENV PATH="/opt/venv/bin:$PATH"
 
 USER node
